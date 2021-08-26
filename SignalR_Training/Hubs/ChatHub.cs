@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.SignalR;
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
@@ -7,6 +8,7 @@ namespace SignalR_Training.Hubs
 {
     public class ChatHub : Hub
     {
+        [Authorize]
         public async Task SendMessage(string user, string message)
         {
             await Clients.All.SendAsync("ReceiveMessage", $"{user} ({Context.ConnectionId})", message);

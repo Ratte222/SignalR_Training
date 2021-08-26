@@ -1,6 +1,8 @@
 ﻿"use strict";
 
-var connection = new signalR.HubConnectionBuilder().configureLogging(signalR.LogLevel.Information).withUrl("/chatHub").build();
+let token = "43jvnfdjf5mkcsn";
+var connection = new signalR.HubConnectionBuilder().configureLogging(signalR.LogLevel.Information)
+    .withUrl("/chatHub", { accessTokenFactory: () => token }).build();
 
 connection.serverTimeoutInMilliseconds = 1000 * 60 * 10;
 
@@ -43,3 +45,4 @@ document.getElementById("sendButton").addEventListener("click", function (event)
     });
     event.preventDefault();
 });
+
