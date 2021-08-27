@@ -25,11 +25,14 @@
         let token;      // токен
         let username;   // имя пользователя
         const hubConnection = new signalR.HubConnectionBuilder()
+            .configureLogging(signalR.LogLevel.Information)
             .withUrl("/chatHub", { accessTokenFactory: () => token})
             .build();
 
-        hubConnection.on("Receive", function (message, userName) {
+        hubConnection.serverTimeoutInMilliseconds = 1000 * 60 * 10;
 
+        hubConnection.on("ReceiveMessage", function (message, userName) {
+            console.log(`ReceiveMessage user: ${userName} message: ${message}`);
             // создаем элемент <b> для имени пользователя
             let userNameElem = document.createElement("b");
             userNameElem.appendChild(document.createTextNode(userName + ": "));
@@ -42,14 +45,23 @@
             var firstElem = document.getElementById("chatroom").firstChild;
             document.getElementById("chatroom").insertBefore(elem, firstElem);
         });
-
+        hubConnection.on('Notify', function (message) {
+            console.log(`Notify message: ${message}`);
+            // добавляет элемент для диагностического сообщения
+            let notifyElem = document.createElement("b");
+            notifyElem.appendChild(document.createTextNode(message));
+            let elem = document.createElement("p");
+            elem.appendChild(notifyElem);
+            var firstElem = document.getElementById("chatroom").firstChild;
+            document.getElementById("chatroom").insertBefore(elem, firstElem);
+        });
         // аутентификация
         document.getElementById("loginBtn").addEventListener("click", function (e) {
 
             var request = new XMLHttpRequest();
             // посылаем запрос на адрес "/token", в ответ получим токен и имя пользователя
-            request.open("POST", "api/Account/Login", true);
-            request.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+            request.open("POST", "/api/Account/Login", true);
+            request.setRequestHeader("Content-Type", "application/json;charset=UTF-8");
             request.addEventListener("load", function () {
                 if (request.status < 400) { // если запрос успешный
 
@@ -68,13 +80,15 @@
                 }
             });
             // отправляем запрос на аутентификацию
-            request.send("username=" + document.getElementById("userName").value +
-                "&password=" + document.getElementById("userPassword").value);
+            request.send(JSON.stringify({
+                "userName": document.getElementById("userName").value,
+                "password": document.getElementById("userPassword").value
+            }));
         });
         // отправка сообщения на сервер
         document.getElementById("sendBtn").addEventListener("click", function (e) {
             let message = document.getElementById("message").value;
-            hubConnection.invoke("Send", message, username);
+            hubConnection.invoke("SendMessage", message, username);
         });
     </script>
 </body>

@@ -25,9 +25,16 @@ namespace SignalR_Training.Controller
             _appSettings = appSettings;
         }
 
-        [HttpPost("Login")]
-        public async Task<IActionResult> Login(string username, string password)
+        public class LoginData
         {
+            public string UserName { get; set; }
+            public string Password { get; set; }
+        }
+
+        [HttpPost("Login")]
+        public async Task<IActionResult> Login(LoginData loginData)
+        {
+            string username = loginData.UserName, password = loginData.Password;
             User user = await _userManager.FindByNameAsync(username);
             if (user == null)
             {
