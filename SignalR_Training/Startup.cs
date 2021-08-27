@@ -151,7 +151,7 @@ namespace SignalR_Training
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env,
             AppDBContext applicationContext, UserManager<User> userManager)
         {
-            //applicationContext.Database.Migrate();
+            applicationContext.Database.Migrate();
             DbInitializer.Initialize(applicationContext, userManager);
             if (env.IsDevelopment())
             {

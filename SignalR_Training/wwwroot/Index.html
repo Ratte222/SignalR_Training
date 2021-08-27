@@ -6,7 +6,7 @@
 </head>
 <body>
     <div id="loginBlock">
-        Введите логин:<br />
+        Enter userName:<br />
         <input id="userName" type="text" />
         <input id="userPassword" type="text" />
         <input id="loginBtn" type="button" value="Войти" />
@@ -18,12 +18,12 @@
         <input type="text" id="message" />
         <input type="button" id="sendBtn" disabled value="Отправить" />
     </div>
-    <div id="chatroom"></div>
+    <div id="messagesList"></div>
 
     <script src="js/signalr/dist/browser/signalr.min.js"></script>
     <script>
-        let token;      // токен
-        let username;   // имя пользователя
+        let token;      
+        let username;   
         const hubConnection = new signalR.HubConnectionBuilder()
             .configureLogging(signalR.LogLevel.Information)
             .withUrl("/chatHub", { accessTokenFactory: () => token})
@@ -31,29 +31,20 @@
 
         hubConnection.serverTimeoutInMilliseconds = 1000 * 60 * 10;
 
-        hubConnection.on("ReceiveMessage", function (message, userName) {
-            console.log(`ReceiveMessage user: ${userName} message: ${message}`);
-            // создаем элемент <b> для имени пользователя
-            let userNameElem = document.createElement("b");
-            userNameElem.appendChild(document.createTextNode(userName + ": "));
-
-            // создает элемент <p> для сообщения пользователя
-            let elem = document.createElement("p");
-            elem.appendChild(userNameElem);
-            elem.appendChild(document.createTextNode(message));
-
-            var firstElem = document.getElementById("chatroom").firstChild;
-            document.getElementById("chatroom").insertBefore(elem, firstElem);
+        hubConnection.on("ReceiveMessage", function (message, user) {
+            var li = document.createElement("li");
+            document.getElementById("messagesList").appendChild(li);
+            console.log(`ReceiveMessage user: ${user} message: ${message}`);
+            // We can assign user-supplied strings to an element's textContent because it
+            // is not interpreted as markup. If you're assigning in any other way, you 
+            // should be aware of possible script injection concerns.
+            li.textContent = `${user} says ${message}`;
         });
         hubConnection.on('Notify', function (message) {
+            var li = document.createElement("li");
+            document.getElementById("messagesList").appendChild(li);
             console.log(`Notify message: ${message}`);
-            // добавляет элемент для диагностического сообщения
-            let notifyElem = document.createElement("b");
-            notifyElem.appendChild(document.createTextNode(message));
-            let elem = document.createElement("p");
-            elem.appendChild(notifyElem);
-            var firstElem = document.getElementById("chatroom").firstChild;
-            document.getElementById("chatroom").insertBefore(elem, firstElem);
+            li.textContent = message;
         });
         // аутентификация
         document.getElementById("loginBtn").addEventListener("click", function (e) {

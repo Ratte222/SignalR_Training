@@ -14,16 +14,16 @@ namespace DAL.EF
         public AppDBContext(DbContextOptions<AppDBContext> options)
             : base(options)
         {
-            //Database.EnsureCreated();
+            
         }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (!optionsBuilder.IsConfigured)
-            {                
-                optionsBuilder.UseSqlServer(@"Server=(localdb)\\mssqllocaldb;Database=SignalR_Training;Trusted_Connection=True;MultipleActiveResultSets=true");
-            }            
-        }
+        //protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        //{
+        //    if (!optionsBuilder.IsConfigured)
+        //    {                
+        //        optionsBuilder.UseSqlServer(@"Server=(localdb)\\mssqllocaldb;Database=SignalR_Training;Trusted_Connection=True;MultipleActiveResultSets=true");
+        //    }            
+        //}
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
