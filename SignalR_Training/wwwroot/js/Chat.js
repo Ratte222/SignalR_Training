@@ -1,6 +1,6 @@
 ﻿"use strict";
 
-let token = "43jvnfdjf5mkcsn";
+let token;
 var connection = new signalR.HubConnectionBuilder().configureLogging(signalR.LogLevel.Information)
     .withUrl("/chatHub", { accessTokenFactory: () => token }).build();
 

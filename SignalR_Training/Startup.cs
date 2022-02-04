@@ -33,7 +33,8 @@ namespace SignalR_Training
         {
             string connection = Configuration.GetConnectionString("DefaultConnection");
             //services.AddMvcCore().AddApiExplorer().AddAuthorization();
-            services.AddDbContext<AppDBContext>(options => options.UseSqlServer(connection), ServiceLifetime.Transient);
+            //services.AddDbContext<AppDBContext>(options => options.UseSqlServer(connection), ServiceLifetime.Transient);
+            services.AddDbContext<AppDBContext>(options => options.UseInMemoryDatabase("myDB"));
             services.AddRazorPages();
             #region SignalR
             //https://docs.microsoft.com/ru-ru/aspnet/core/tutorials/signalr?view=aspnetcore-3.1&tabs=visual-studio
@@ -151,7 +152,7 @@ namespace SignalR_Training
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env,
             AppDBContext applicationContext, UserManager<User> userManager)
         {
-            applicationContext.Database.Migrate();
+            //applicationContext.Database.Migrate();
             DbInitializer.Initialize(applicationContext, userManager);
             if (env.IsDevelopment())
             {
